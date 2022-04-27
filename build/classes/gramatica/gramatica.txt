@@ -1,0 +1,74 @@
+							///////Gramática//////
+
+
+
+Goal -> program
+program -> externs
+externs -> extern externs | LAMBDA
+extern -> type restoextern | ID func
+restoextern -> ID restoextern2 | '*' ID restovars
+restoextern2 -> func | restodclr restovars
+var -> type dclr restovars
+restovars -> LAMBDA | ',' dclr restovars
+type -> 'char' | 'float' | 'int' | 'double'
+dclr -> ID restodclr | '*' ID 
+restodclr -> LAMBDA | '[' restodclr2
+restodclr2 -> ']' | NUMINT ']'
+dcls -> var ';' dcls | LAMBDA
+func -> fargs '{' dcls stmts '}'
+fargs -> '(' restofargs
+restofargs -> args ')' | ')'
+args -> type dclr restoargs
+restoargs -> LAMBDA | ',' args
+stmts -> stmt stmts | LAMBDA
+stmt -> expr ';'
+stmt -> 'if' '(' expro ')' stmt restoif
+stmt -> 'while' '(' expro ')' stmt
+stmt -> 'for' '(' expro ';' expro ';' expro ')' stmt
+stmt -> 'return' restoreturn
+stmt -> 'break' ';' | 'continue' ';'
+stmt -> block | ';'
+restoif -> LAMBDA | 'else' stmt
+restoreturn -> ';' | expr ';'
+block -> '{' stmts '}'
+lval -> ID restolval | '*' ID
+restolval -> LAMBDA | '[' expr ']'
+expr -> or restoexpr
+restoexpr -> '=' expr | LAMBDA
+or -> and restoor
+restoor -> LAMBDA | '||' or
+and -> not restoand
+restoand -> LAMBDA | '&&' and
+not -> '!' not | cfator
+cfator -> orbin restocfator
+restocfator -> LAMBDA | '==' orbin | '!=' orbin
+restocfator -> '<=' orbin | '>=' orbin
+restocfactor -> '<' orbin | '>' orbin
+orbin -> xorbin restoorbin
+restoorbin -> PIPE xorbin restoorbin | LAMBDA
+xorbin -> andbin restoxorbin
+restoxorbin -> '^' andbin restoxorbin | LAMBDA
+andbin -> rola restoandbin
+restoandbin -> '&' rola restoandbin | LAMBDA
+rola -> soma restorola
+restorola -> '<<' soma restorola | ''>>' soma restorola
+restorola -> LAMBDA
+soma -> mult restosoma
+restosoma -> '+' mult restosoma | '-' mult restosoma
+restosoma -> LAMBDA
+mult -> ender restomult
+restomult -> '*' ender restomult | '/' ender restomult
+restomult -> '%' ender restomult | LAMBDA
+ender -> '&' lval | '*' ender | uno
+uno -> '-' uno | '+' uno | notbin
+notbin -> '~' notbin | incpre
+incpre -> '++' lval | '--' lval | incpos
+incpos -> fator restoincpos
+restoincpos -> '++' | '--' | LAMBDA
+fator -> ID restofator1 | '(' expr ')'
+fator -> NUMINT | NUMFLOAT | STR
+restofator1 -> LAMBDA | '[' expr ']' | '(' restofator2
+restofator2 -> ')' | exprs ')'
+exprs -> expr restoexprs
+restoexprs -> LAMBDA | ',' exprs
+expro -> expr | LAMBDA
